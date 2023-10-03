@@ -17,6 +17,9 @@ framework:
     #fragments: true
     php_errors:
         log: true
+    cache:
+        app: cache.adapter.redis
+        default_redis_provider: "redis://localhost:6379?dbindex=0"
 
 when@test:
     framework:
