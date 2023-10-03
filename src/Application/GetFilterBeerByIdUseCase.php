@@ -6,7 +6,7 @@ use App\Application\Interfaces\BeerApiFilterIdInterface;
 use App\Domain\Beer;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
 
-class GetFilterBeerByStringUseCase implements BeerApiFilterIdInterface
+class GetFilterBeerByIdUseCase implements BeerApiFilterIdInterface
 {
     private HttpClientInterface $httpClient;
 
@@ -14,7 +14,7 @@ class GetFilterBeerByStringUseCase implements BeerApiFilterIdInterface
     {
         $this->httpClient = $httpClient;
     }
-
+    
     public function filterById(int $character): ?Beer
     {
         return null;
