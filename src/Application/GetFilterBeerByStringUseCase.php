@@ -3,6 +3,9 @@
 namespace App\Application;
 
 use App\Application\Interfaces\BeerApiFilterStringInterface;
+use App\Domain\Beer;
+use Symfony\Component\HttpFoundation\Exception\BadRequestException;
+use Symfony\Component\HttpFoundation\Response as HttpFoundationResponse;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
 
 class GetFilterBeerByStringUseCase implements BeerApiFilterStringInterface
@@ -14,8 +17,37 @@ class GetFilterBeerByStringUseCase implements BeerApiFilterStringInterface
         $this->httpClient = $httpClient;
     }
 
-    public function filterByString(string $character): array
+    /**
+     * Filter by a string in the api
+     */
+    public function filterByString(string $characters): array
     {
-        return [];
+        try {
+
+            $response = $this->httpClient->request(
+                'GET',
+                'https://api.punkapi.com/v2/beers?food=' . $characters
+            );
+            $beers = $response->toArray();
+
+            if (!$beers) {
+                throw new BadRequestException('Beer not found', HttpFoundationResponse::HTTP_NOT_FOUND);
+            }
+
+            $beersObject = [];
+            foreach ($beers as $beer) {
+                $beersObject[] = new Beer(
+                    $beer['id'],
+                    $beer['name'],
+                    $beer['tagline'],
+                    $beer['first_brewed'],
+                    $beer['description'],
+                    $beer['image_url']
+                );
+            }
+            return $beersObject;
+        } catch (BadRequestException $e) {
+            throw new BadRequestException($e->getMessage(), $e->getCode());
+        }
     }
 }
