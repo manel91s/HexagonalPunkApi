@@ -5,7 +5,7 @@ namespace App\Application;
 use App\Application\Interfaces\BeerApiFilterStringInterface;
 use App\Domain\Beer;
 use Symfony\Component\HttpFoundation\Exception\BadRequestException;
-use Symfony\Component\HttpFoundation\Response as HttpFoundationResponse;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
 
 class GetFilterBeerByStringUseCase implements BeerApiFilterStringInterface
@@ -31,7 +31,7 @@ class GetFilterBeerByStringUseCase implements BeerApiFilterStringInterface
             $beers = $response->toArray();
 
             if (!$beers) {
-                throw new BadRequestException('Beer not found', HttpFoundationResponse::HTTP_NOT_FOUND);
+                throw new BadRequestException('Beer not found', Response::HTTP_NOT_FOUND);
             }
 
             $beersObject = [];

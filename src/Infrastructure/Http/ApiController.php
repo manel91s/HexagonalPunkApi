@@ -2,6 +2,7 @@
 
 namespace App\Infrastructure\Http;
 
+use App\Application\GetFilterBeerByIdUseCase;
 use App\Application\GetFilterBeerByStringUseCase;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Exception\BadRequestException;
@@ -16,7 +17,7 @@ class ApiController extends AbstractController
      * Gets beers in filter food pairing
      * @return JsonResponse
      */
-    #[Route('/beer', methods: ['GET'])]
+    #[Route('/beers', methods: ['GET'])]
     public function getBeerByFood(
         Request $request,
         GetFilterBeerByStringUseCase $getFilterBeerByStringUseCase
@@ -30,6 +31,35 @@ class ApiController extends AbstractController
 
             return $this->json([
                 'data' => $this->serializeObjects($beers)
+            ], Response::HTTP_OK);
+        } catch (BadRequestException $e) {
+            return $this->json(['msg' => $e->getMessage()], $e->getCode());
+        }
+    }
+
+    /**
+     * Gets beers in filter food pairing
+     * @return JsonResponse
+     */
+    #[Route('/beer/{id}', methods: ['GET'])]
+    public function getBeerById(
+        Request $request,
+        GetFilterBeerByIdUseCase $getFilterBeerByIdUseCase
+    ): JsonResponse {
+
+        try {
+           
+            $beer = $getFilterBeerByIdUseCase->filterById(
+                intval($request->attributes->get('id'))
+            );
+
+            return $this->json([
+                'id' => $beer->getId(),
+                'name' => $beer->getName(),
+                'tagline' => $beer->getTagline(),
+                'first_brewed' => $beer->getFirstBrewed(),
+                'description' => $beer->getDescription(),
+                'image' => $beer->getImage()
             ], Response::HTTP_OK);
         } catch (BadRequestException $e) {
             return $this->json(['msg' => $e->getMessage()], $e->getCode());
