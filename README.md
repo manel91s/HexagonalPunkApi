@@ -12,4 +12,8 @@ Situarse en la carpeta app y ejecutar el comando:
 
 composer install
 
-Acceder a http://localhost:8080/api/doc y hacer peticiones
+Peticiones disponibles:
+http://localhost:8080/api/beers?food=Spicy
+http://localhost:8080/api/beer/5
+
+Acceder a http://localhost:8080/api/doc
