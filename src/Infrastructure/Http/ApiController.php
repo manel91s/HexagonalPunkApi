@@ -4,6 +4,8 @@ namespace App\Infrastructure\Http;
 
 use App\Application\GetFilterBeerByIdUseCase;
 use App\Application\GetFilterBeerByStringUseCase;
+use App\Domain\Beer;
+use OpenApi\Attributes\QueryParameter;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Exception\BadRequestException;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -12,14 +14,26 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Contracts\Cache\CacheInterface;
 use Symfony\Contracts\Cache\ItemInterface;
+use OpenApi\Attributes as OA;
+use Nelmio\ApiDocBundle\Annotation\Model;
 
 class ApiController extends AbstractController
 {
-    /**
-     * Gets beers in filter food pairing
-     * @return JsonResponse
-     */
     #[Route('/beers', methods: ['GET'])]
+    #[OA\Response(
+        response: 200,
+        description: 'Return beers by food',
+        content: new OA\JsonContent(
+            type: 'array',
+            items: new OA\Items(ref: new Model(type: Beer::class, groups: ['full']))
+        )
+    )]
+    #[OA\Parameter(
+        name: 'food',
+        in: 'query',
+        description: 'The field used to filter beer by food pairing',
+        schema: new OA\Schema(type: 'string')
+    )]
     public function getBeerByFood(
         Request $request,
         GetFilterBeerByStringUseCase $getFilterBeerByStringUseCase,
@@ -50,11 +64,15 @@ class ApiController extends AbstractController
         }
     }
 
-    /**
-     * Gets beers in filter food pairing
-     * @return JsonResponse
-     */
     #[Route('/beer/{id}', methods: ['GET'])]
+    #[OA\Response(
+        response: 200,
+        description: 'Return beer by id',
+        content: new OA\JsonContent(
+            type: 'array',
+            items: new OA\Items(ref: new Model(type: Beer::class, groups: ['full']))
+        )
+    )]
     public function getBeerById(
         Request $request,
         GetFilterBeerByIdUseCase $getFilterBeerByIdUseCase,
